@@ -26,33 +26,41 @@ from random import randint
 array = []
 for i in range(0, 50000000):
     array.append(randint(1, 1000))
+# памяти для хранения этого массива: 40 + 8 * 1000 байт + 24 * 1000 байт = 32 000 байт + 40 = ~ 32 кбайт + 40 байт
+
 
 # вариант решения из разбора ДЗ
-start_1 = time.time()
-min_1, min_2 = array[0], array[1]
+start_1 = time.time()                   # float 24 байта
+
+min_1, min_2 = array[0], array[1]       # 2 * 24 байта
 if min_1 > min_2:
     man_1, min_2 = min_2, min_1
-for elem in array[2:]:
+for elem in array[2:]:                  # int 24 байта
     if elem <= min_1:
         min_2 = min_2
         min_1 = elem
     if elem <= min_2:
         min_2 = elem
-end_1 = time.time()
-#print(f"два наименьших элемента списка - {min_1}, {min_2}")
+end_1 = time.time()                     # float 24 байта
+print(f"два наименьших элемента списка - {min_1}, {min_2}")
 print('timing for algorithm from Damir = ', end_1 - start_1)
 
 # мой вариант решения
-start = time.time()
-first_min_el = min(array)
+start = time.time()                     # float 24 байта
+first_min_el = min(array)               # int 24 байта
 array.remove(min(array))
-second_min_el = min(array)
+second_min_el = min(array)              # int 24 байта
 
-end = time.time()
+end = time.time()                       # float 24 байта
 
-#print(f"два наименьших элемента списка - {first_min_el}, {second_min_el}")
+print(f"два наименьших элемента списка - {first_min_el}, {second_min_el}")
 
 print('timing for algorithm from Teo = ', end - start)
-
-# Teo timing  =  0.2902243137359619 fot range 1 million
-# Teo timing =  13.05340766906738 for 10 millions
+#
+# Итого основная память конечно же затратится на массив из 1000 чисел - 32 кбайт  40 байт
+# для первого варианта решения потребуется ещё 120 байт
+# для второго варианта решения потребуется ещё 96 байт
+# c учётом переменных для подсчета времени работы алгоритма
+#
+# разрядность системы - 64 бита
+# версия python - 3.8
