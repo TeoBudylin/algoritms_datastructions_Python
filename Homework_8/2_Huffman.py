@@ -7,33 +7,42 @@ def Huffman_code(input):
         else:
             freq.update({el:(freq.get(el) + 1)})
 
-    print(freq)
-    # отсортируем наш словарь частот по возрастанию
-    sorted_freq = {}
-    sorted_frq_values = sorted(freq.values())
-    for i in sorted_frq_values:
-        for key in freq.keys():
-            if freq[key] == i:
-                sorted_freq[key] = freq[key]
-    print(sorted_freq)
-    q = sorted_freq.items()
-    print(q)
-
-
     class Node:
-        def __init__(self, value, left_ch=None, right_ch=None):
-            self.value = value
+        def __init__(self, left_ch=None, right_ch=None):
             self.left_ch = left_ch
             self.right_ch = right_ch
-    class Tree:
-        def __init__(self, root):
-            self.root = root
+        def walk(self, code, acc):
+            self.left_ch.walk(code, acc + '0')
+            self.right_ch.walk(code, acc + '1')
 
-    # for el in q:
-    node_1 = Node(q[0][0])
-    node_2 = Node(q[1][0])
-    node_3 = Node(q[0][1] + q[1][1], left_ch=node_1, right_ch=node_2)
-    q[0] = node_3
+    class Leaf:
+        def __init__(self, value):
+            self.value = value
+        def walk(self, code, acc):
+            code[self.value] = acc or '0'
 
+    h=[]
+    for ch, freq in freq.items():
+        h.append((freq, len(h), Leaf(ch)))
 
-Huffman_code('beep boop beer!')
+    import heapq
+    heapq.heapify(h)
+    counter = len(h)
+    while len(h) > 1:
+        freq_1, _counter_1, left = heapq.heappop(h)
+        freq_2, _counter_2, right = heapq.heappop(h)
+        heapq.heappush(h, (freq_1 + freq_2, counter, Node(left, right)))
+        counter += 1
+
+    code={}
+    [(_freq, _counter, root)] = h
+    root.walk(code, '')
+
+    print(code)
+
+    codet = ''
+    for el in input:
+        codet += code.get(el)
+    return codet
+
+print(Huffman_code('beep boop beer!'))
